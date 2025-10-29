@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 
 from sqlalchemy import ForeignKey
+
 from modules.settings.database import db
 from modules.models.user_type import UserType
 

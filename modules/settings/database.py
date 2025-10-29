@@ -1,12 +1,11 @@
 import os
 
 from dotenv import load_dotenv
+from flask_sqlalchemy import SQLAlchemy
 from pydantic import PostgresDsn
 from sqlalchemy.orm import registry
-from flask_sqlalchemy import SQLAlchemy
 
 load_dotenv()
-
 
 mapper_registry = registry()
 
