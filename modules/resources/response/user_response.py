@@ -1,6 +1,7 @@
 from typing import Optional
 
 from pydantic import BaseModel, ConfigDict
+
 from modules.resources.response.user_type_response import UserTypeResponse
 
 
