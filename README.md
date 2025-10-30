@@ -40,7 +40,7 @@ With the virtual environment created and activated, run the following command to
 pip install -r requirements.txt
 ```
 
-Start the docker container the following command:
+Start the docker container with the following command:
 ```jsx
 docker compose up
 ```
