@@ -1,15 +1,16 @@
 from datetime import datetime, timezone
 
+from flask_login import UserMixin
 from sqlalchemy import ForeignKey
 
 from settings.database import db
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    email = db.Column(db.String(255), index=True, nullable=False)
+    email = db.Column(db.String(255), index=True, nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
     username = db.Column(db.String(255), nullable=False)
     name = db.Column(db.String(255), nullable=True)
@@ -22,3 +23,6 @@ class User(db.Model):
     def update(self, data: dict[str, str]):
         for key, value in data.items():
             setattr(self, key, value)
+
+    def get_id(self):
+        return str(self.id)

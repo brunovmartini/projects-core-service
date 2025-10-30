@@ -2,11 +2,15 @@ from datetime import datetime, timezone
 from typing import List, Any
 
 from flask import Response
-from werkzeug.exceptions import BadRequest, NotFound
+from flask_login import login_user, current_user
+from werkzeug.exceptions import BadRequest, NotFound, Unauthorized, Conflict, UnprocessableEntity
+from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash
 
 from helpers.helpers import is_invalid_request
 from models.user import User
 from repositories.user_repository import UserRepository
+from resources.request.auth_request import LoginRequest
 from resources.request.user_request import CreateUserRequest
 from resources.response.user_response import UserResponse
 
@@ -21,14 +25,32 @@ class UserService:
             raise NotFound(f'Not found user with id={user_id}.')
         return user
 
+    def get_user_by_email(self, email: str) -> User | None:
+        return self.repository.get_by_email(email=email)
+
+    def login(self, data: LoginRequest) -> Response | None:
+        if not data or "email" not in data or "password" not in data:
+            raise BadRequest()
+
+        user = self.get_user_by_email(email=data.get('email'))
+        if not user or not check_password_hash(user.password, data.get('password')):
+            raise Unauthorized('Invalid email or password.')
+
+        login_user(user)
+
+        return Response('Login sucessful.', status=200)
+
     def create_user(self, body: CreateUserRequest) -> dict[str, Any] | None:
         if is_invalid_request(body):
             raise BadRequest()
 
+        if self.get_user_by_email(body.email):
+            raise Conflict()
+
         user = self.repository.create(
             User(
                 email=body.email,
-                password=body.password,
+                password=generate_password_hash(body.password),
                 username=body.username,
                 name=body.name,
                 user_type=body.user_type,
@@ -58,6 +80,9 @@ class UserService:
 
     def delete_user(self, user_id: int) -> Response | None:
         user = self.get_user_by_id(user_id=user_id)
+
+        if current_user.id == user.id:
+            raise UnprocessableEntity()
 
         self.repository.delete(user)
         return Response(f'User with id={user_id} deleted.', status=200)
