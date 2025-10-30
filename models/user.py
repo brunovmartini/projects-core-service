@@ -17,6 +17,8 @@ class User(UserMixin, db.Model):
     user_type = db.Column(db.Integer, ForeignKey("user_type.id"))
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime)
+    created_by = db.Column(db.Integer, ForeignKey("user.id"))
+    updated_by = db.Column(db.Integer, ForeignKey("user.id"))
 
     type = db.relationship("UserType", backref="users", lazy="joined")
 

@@ -11,5 +11,8 @@ class UserResponse(BaseModel):
     username: str
     name: str
     type: UserTypeResponse
+    created_by: int
+    updated_by: Optional[int]
 
     model_config = ConfigDict(from_attributes=True)
+    model_config['from_attributes'] = True

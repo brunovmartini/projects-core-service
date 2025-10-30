@@ -5,6 +5,7 @@ from werkzeug.exceptions import BadRequest
 
 from helpers.helpers import is_invalid_request
 from models.task import Task
+from flask_login import current_user
 from repositories.task_repository import TaskRepository
 from resources.request.task_request import TaskRequest
 from resources.response.task_response import TaskResponse
@@ -25,13 +26,14 @@ class TaskService:
                 start_date=body.start_date,
                 due_date=body.due_date,
                 project_id=project_id,
-                created_at=datetime.now(timezone.utc)
+                created_at=datetime.now(timezone.utc),
+                created_by=current_user.id
             )
         )
-        return TaskResponse.from_orm(task).model_dump()
+        return TaskResponse.model_validate(task).model_dump()
 
     def get_tasks_by_project(self, project_id: int) -> List[dict[str, Any] | None]:
         return [
-            TaskResponse.from_orm(task).model_dump()
+            TaskResponse.model_validate(task).model_dump()
             for task in self.repository.get_all_tasks_by_project(project_id=project_id)
         ]

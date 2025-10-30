@@ -14,7 +14,7 @@ class Task(db.Model):
     due_date = db.Column(db.DateTime)
     project_id = db.Column(db.Integer, ForeignKey("project.id"))
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = db.Column(db.DateTime)
+    created_by = db.Column(db.Integer, ForeignKey("user.id"))
 
     project = db.relationship("Project", backref="tasks", lazy="joined")
 

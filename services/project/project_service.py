@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from typing import List, Any
 
 from flask import Response
+from flask_login import current_user
 from werkzeug.exceptions import BadRequest, NotFound
 
 from helpers.helpers import is_invalid_request
@@ -31,17 +32,18 @@ class ProjectService:
                 subject=body.subject,
                 start_date=body.start_date,
                 due_date=body.due_date,
-                created_at=datetime.now(timezone.utc)
+                created_at=datetime.now(timezone.utc),
+                created_by=current_user.id
             )
         )
-        return ProjectResponse.from_orm(project).model_dump()
+        return ProjectResponse.model_validate(project).model_dump()
 
     def get_projects(self) -> List[dict[str, Any] | None]:
-        return [ProjectResponse.from_orm(project).model_dump() for project in self.repository.get_all()]
+        return [ProjectResponse.model_validate(project).model_dump() for project in self.repository.get_all()]
 
     def get_project(self, project_id: int) -> dict[str, Any] | None:
         project = self.get_project_by_id(project_id=project_id)
-        return ProjectResponse.from_orm(project).model_dump()
+        return ProjectResponse.model_validate(project).model_dump()
 
     def update_project(self, project_id: int, body: ProjectRequest) -> dict[str, Any] | None:
         project = self.get_project_by_id(project_id=project_id)
@@ -51,9 +53,10 @@ class ProjectService:
 
         project.update(body.__dict__)
         project.updated_at = datetime.now(timezone.utc)
+        project.updated_by = current_user.id
 
         project = self.repository.update(project)
-        return ProjectResponse.from_orm(project).model_dump()
+        return ProjectResponse.model_validate(project).model_dump()
 
     def delete_project(self, project_id: int) -> Response | None:
         project = self.get_project_by_id(project_id=project_id)
