@@ -5,7 +5,7 @@
 ### Requirements 📋
 
 - Python 3.10.12. It’s recommended to use [pyenv](https://github.com/pyenv/pyenv) to easily install the desired Python version.
-- A .env file created at the project root containing the required environment variables.
+- A `.env` file created at the project root containing the required environment variables.
 - Docker compose installed.
 
 ---
@@ -23,7 +23,9 @@ Main frameworks and libraries:
 
 ### Running the Application 💻
 
-It’s recommended to create a virtual environment (virtualenv) to isolate the application dependencies. On the root folder:
+It’s recommended to create a virtual environment (virtualenv) to isolate the application dependencies.
+
+On the root folder run the following command:
 ```jsx
 python -m venv .venv
 ```
@@ -33,23 +35,23 @@ After the creation of the virtual environment, it should be activated with follo
 source .venv/bin/activate
 ```
 
-With the virtual environment created and activated, run the following command:
+With the virtual environment created and activated, run the following command to install the dependencies:
 ```jsx
 pip install -r requirements.txt
 ```
 
-To start the docker container the following command must be used:
+Start the docker container the following command:
 ```jsx
 docker compose up
 ```
 
-To run the application locally on http://127.0.0.1:5000/ and create the database tables automatically:
+To run the application locally on http://127.0.0.1:5000/ and create the database tables automatically, run the following command in a new terminal:
 
 ```jsx
 python main.py
 ```
 
-To run unit tests and integration tests, the following command must be typed on the root folder in a different terminal or with the application stopped:
+To run unit tests and integration tests, run the following command on the root folder in a different terminal or with the application stopped:
 
 ```jsx
 pytest
@@ -59,19 +61,27 @@ pytest
 
 ### Documentation ️📖
 
-The documentation for the available endpoints were created using `Sphinx` and can be viewed by opening the file `docs/build/html/index.html` with a browser.
-
-On linux, the following command will open the documentation file automatically:
+The documentation for the available endpoints were created using `Sphinx` and can be generated with the following commands:
 ```jsx
-xdg-open docs/build/html/index.html
+cd docs
+```
+```jsx
+make html
+```
+
+The documentation can be viewed by opening the file `docs/build/html/index.html` with a browser.
+
+On linux, the following command will open the documentation file automatically when executed on the `/docs` folder:
+```jsx
+xdg-open build/html/index.html
 ```
 Alternatively on macOS:
 ```jsx
-open docs/build/html/index.html
+open build/html/index.html
 ```
 And on Windows (PowerShell):
 ```jsx
-start docs\build\html\index.html
+start build\html\index.html
 ```
 
 ---
