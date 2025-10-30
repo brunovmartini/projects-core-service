@@ -30,7 +30,7 @@ On the root folder run the following command:
 python -m venv .venv
 ```
 
-After the creation of the virtual environment, it should be activated with following command:
+After the creation of the virtual environment, it should be activated with the following command:
 ```jsx
 source .venv/bin/activate
 ```
@@ -125,7 +125,7 @@ With the admin user logged in, a new user can be created with the create user en
 }
 ```
 
-After the creation of this user, the password will be safely stored in the database with encription. Therefore the admin user can be logged out with the endpoint `/auth/logout` and the new created user can log in to start using the application with its own user.
+After the creation of this user, the password will be safely stored in the database with encription. Therefore, the admin user can be logged out with the endpoint `/auth/logout` and the new created user can log in to start using the application with its own user.
 
 ---
 
