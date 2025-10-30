@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session, joinedload
 from typing_extensions import override
 
-from modules.models.user import User
-from modules.repositories.i_repository import IRepository
+from models.user import User
+from repositories.i_repository import IRepository
 
 
 class UserRepository(IRepository[User, int]):
