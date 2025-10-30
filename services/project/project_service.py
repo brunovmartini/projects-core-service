@@ -27,11 +27,11 @@ class ProjectService:
 
         project = self.repository.create(
             Project(
-                created_at=datetime.now(timezone.utc),
                 name=body.name,
                 subject=body.subject,
                 start_date=body.start_date,
-                due_date=body.due_date
+                due_date=body.due_date,
+                created_at=datetime.now(timezone.utc)
             )
         )
         return ProjectResponse.from_orm(project).model_dump()

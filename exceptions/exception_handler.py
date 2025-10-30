@@ -1,5 +1,5 @@
 from flask import Flask, Response
-from werkzeug.exceptions import BadRequest, NotFound
+from werkzeug.exceptions import BadRequest, NotFound, InternalServerError, Unauthorized
 
 
 def add_exception_handler(app: Flask):
@@ -15,4 +15,18 @@ def add_exception_handler(app: Flask):
         return Response(
             response=e.description,
             status=404
+        )
+
+    @app.errorhandler(Unauthorized)
+    def handle_not_found_error(e):
+        return Response(
+            response='User unauthorized.',
+            status=401
+        )
+
+    @app.errorhandler(InternalServerError)
+    def handle_not_found_error(e):
+        return Response(
+            response=e.description,
+            status=500
         )
