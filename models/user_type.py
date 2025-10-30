@@ -1,4 +1,4 @@
-from modules.settings.database import db
+from settings.database import db
 
 
 class UserType(db.Model):

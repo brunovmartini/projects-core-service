@@ -1,10 +1,10 @@
 from flask import Blueprint
 from flask_pydantic import validate
 
-from modules.repositories.user_repository import UserRepository
-from modules.resources.request.user_request import CreateUserRequest, UpdateUserRequest
-from modules.services.user.user_service import UserService
-from modules.settings.database import db
+from repositories.user_repository import UserRepository
+from resources.request.user_request import CreateUserRequest, UpdateUserRequest
+from services.user.user_service import UserService
+from settings.database import db
 
 user_apis = Blueprint('/users', __name__)
 

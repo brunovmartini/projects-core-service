@@ -1,0 +1,62 @@
+from datetime import datetime, timezone
+from typing import List, Any
+
+from flask import Response
+from werkzeug.exceptions import BadRequest, NotFound
+
+from helpers.helpers import is_invalid_request
+from models.project import Project
+from repositories.project_repository import ProjectRepository
+from resources.request.project_request import ProjectRequest
+from resources.response.project_response import ProjectResponse
+
+
+class ProjectService:
+    def __init__(self, repository: ProjectRepository):
+        self.repository = repository
+
+    def get_project_by_id(self, project_id: int) -> Project | None:
+        project = self.repository.get_by_id(id=project_id)
+        if not project:
+            raise NotFound(f'Not found project with id={project_id}.')
+        return project
+
+    def create_project(self, body: ProjectRequest) -> dict[str, Any] | None:
+        if is_invalid_request(body):
+            raise BadRequest()
+
+        project = self.repository.create(
+            Project(
+                created_at=datetime.now(timezone.utc),
+                name=body.name,
+                subject=body.subject,
+                start_date=body.start_date,
+                due_date=body.due_date
+            )
+        )
+        return ProjectResponse.from_orm(project).model_dump()
+
+    def get_projects(self) -> List[dict[str, Any] | None]:
+        return [ProjectResponse.from_orm(project).model_dump() for project in self.repository.get_all()]
+
+    def get_project(self, project_id: int) -> dict[str, Any] | None:
+        project = self.get_project_by_id(project_id=project_id)
+        return ProjectResponse.from_orm(project).model_dump()
+
+    def update_project(self, project_id: int, body: ProjectRequest) -> dict[str, Any] | None:
+        project = self.get_project_by_id(project_id=project_id)
+
+        if is_invalid_request(body):
+            raise BadRequest()
+
+        project.update(body.__dict__)
+        project.updated_at = datetime.now(timezone.utc)
+
+        project = self.repository.update(project)
+        return ProjectResponse.from_orm(project).model_dump()
+
+    def delete_project(self, project_id: int) -> Response | None:
+        project = self.get_project_by_id(project_id=project_id)
+
+        self.repository.delete(project)
+        return Response(f'Project with id={project_id} deleted.', status=200)

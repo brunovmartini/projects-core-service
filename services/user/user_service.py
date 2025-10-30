@@ -4,11 +4,11 @@ from typing import List, Any
 from flask import Response
 from werkzeug.exceptions import BadRequest, NotFound
 
-from modules.helpers.helpers import is_invalid_request
-from modules.models.user import User
-from modules.repositories.user_repository import UserRepository
-from modules.resources.request.user_request import CreateUserRequest
-from modules.resources.response.user_response import UserResponse
+from helpers.helpers import is_invalid_request
+from models.user import User
+from repositories.user_repository import UserRepository
+from resources.request.user_request import CreateUserRequest
+from resources.response.user_response import UserResponse
 
 
 class UserService:
@@ -27,11 +27,12 @@ class UserService:
 
         user = self.repository.create(
             User(
-                created_at=datetime.now(timezone.utc),
                 email=body.email,
                 password=body.password,
                 username=body.username,
-                user_type=body.user_type
+                name=body.name,
+                user_type=body.user_type,
+                created_at=datetime.now(timezone.utc)
             )
         )
         return UserResponse.from_orm(user).model_dump()
