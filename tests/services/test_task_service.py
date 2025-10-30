@@ -1,0 +1,91 @@
+from datetime import datetime, timezone
+from unittest.mock import Mock, patch
+
+import pytest
+from werkzeug.exceptions import BadRequest
+
+from models.task import Task
+from resources.request.task_request import TaskRequest
+from services.task.task_service import TaskService
+
+
+@pytest.fixture
+def task_service(mock_repository):
+    return TaskService(repository=mock_repository)
+
+
+@pytest.fixture
+def sample_task():
+    return Task(
+        id=1,
+        name="Test Task",
+        description="Sample description",
+        start_date=datetime(2025, 1, 1, tzinfo=timezone.utc),
+        due_date=datetime(2025, 1, 10, tzinfo=timezone.utc),
+        project_id=100,
+        created_at=datetime.now(timezone.utc),
+    )
+
+
+@pytest.fixture
+def sample_request():
+    return TaskRequest(
+        name="Test Task",
+        description="Sample description",
+        start_date=datetime(2025, 1, 1, tzinfo=timezone.utc),
+        due_date=datetime(2025, 1, 10, tzinfo=timezone.utc),
+    )
+
+
+def test_create_task_success(task_service, mock_repository, sample_request, sample_task):
+    with patch("services.task.task_service.is_invalid_request", return_value=False), \
+            patch.object(mock_repository, "create", return_value=sample_task) as mock_create:
+        fake_response = Mock()
+        fake_response.model_dump.return_value = {
+            "id": sample_task.id,
+            "name": sample_task.name,
+            "description": sample_task.description,
+            "project_id": sample_task.project_id,
+            "created_at": sample_task.created_at.isoformat()
+        }
+        with patch("services.task.task_service.TaskResponse.from_orm", return_value=fake_response) as mock_from_orm:
+            result = task_service.create_task(project_id=100, body=sample_request)
+
+            assert result["name"] == "Test Task"
+            mock_create.assert_called_once()
+            mock_from_orm.assert_called_once()
+            assert "created_at" in result
+
+
+def test_create_task_invalid_request(task_service, sample_request):
+    with patch("services.task.task_service.is_invalid_request", return_value=True):
+        with pytest.raises(BadRequest):
+            task_service.create_task(project_id=100, body=sample_request)
+
+
+def test_get_tasks_by_project_success(task_service, mock_repository, sample_task):
+    mock_repository.get_all_tasks_by_project.return_value = [sample_task]
+
+    fake_response = Mock()
+    fake_response.model_dump.return_value = {
+        "id": sample_task.id,
+        "name": sample_task.name,
+        "description": sample_task.description,
+        "project_id": sample_task.project_id,
+        "created_at": sample_task.created_at.isoformat()
+    }
+
+    with patch("services.task.task_service.TaskResponse.from_orm", return_value=fake_response) as mock_from_orm:
+        result = task_service.get_tasks_by_project(project_id=100)
+
+        assert len(result) == 1
+        assert result[0]["name"] == "Test Task"
+        mock_repository.get_all_tasks_by_project.assert_called_once_with(project_id=100)
+        mock_from_orm.assert_called_once_with(sample_task)
+
+
+def test_get_tasks_by_project_empty(task_service, mock_repository):
+    mock_repository.get_all_tasks_by_project.return_value = []
+
+    result = task_service.get_tasks_by_project(project_id=999)
+    assert result == []
