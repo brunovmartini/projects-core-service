@@ -26,7 +26,8 @@ def fake_user():
         username="tester",
         name="Test User",
         user_type=1,
-        created_at=datetime.now(timezone.utc)
+        created_at=datetime.now(timezone.utc),
+        created_by=1
     )
     user.update = Mock()
     return user
@@ -97,20 +98,33 @@ def test_login_user_not_found(service):
 @patch("services.user.user_service.generate_password_hash", return_value="hashed_pw")
 def test_create_user_success(mock_hash, mock_invalid, service, mock_repository, fake_user, fake_request):
     mock_repository.create.return_value = fake_user
-    with patch.object(service, "get_user_by_email", return_value=None), \
-            patch("services.user.user_service.UserResponse.from_orm", return_value=UserResponse.model_validate({
-                "id": 1,
-                "email": fake_user.email,
-                "name": fake_user.name,
-                "username": fake_user.username,
-                "type": UserTypeResponse(id=1, user_type='manager')
-            })) as mock_response:
-        result = service.create_user(fake_request)
-        assert result["id"] == 1
-        mock_repository.create.assert_called_once()
-        mock_hash.assert_called_once_with(fake_request.password)
-        mock_invalid.assert_called_once_with(fake_request)
-        mock_response.assert_called_once()
+    with patch("services.user.user_service.current_user") as mock_current_user:
+        mock_current_user.id = 2
+        with patch.object(service, "get_user_by_email", return_value=None), \
+                patch("services.user.user_service.UserResponse.model_validate", return_value=UserResponse.model_validate({
+                    "id": 1,
+                    "email": fake_user.email,
+                    "name": fake_user.name,
+                    "username": fake_user.username,
+                    "type": UserTypeResponse(id=1, user_type='manager'),
+                    "created_by": 2,
+                    "updated_by": None
+                })) as mock_response:
+
+                result = service.create_user(fake_request)
+                assert result == {
+                    "id": 1,
+                    "email": fake_user.email,
+                    "name": fake_user.name,
+                    "username": fake_user.username,
+                    "type": {'id': 1, 'user_type': 'manager'},
+                    "created_by": 2,
+                    "updated_by": None
+                }
+                mock_repository.create.assert_called_once()
+                mock_hash.assert_called_once_with(fake_request.password)
+                mock_invalid.assert_called_once_with(fake_request)
+                mock_response.assert_called_once()
 
 
 @patch("services.user.user_service.is_invalid_request", return_value=True)
@@ -128,28 +142,35 @@ def test_create_user_conflict(mock_invalid, service, fake_user, fake_request):
 
 def test_get_users_success(service, mock_repository, fake_user):
     mock_repository.get_all.return_value = [fake_user]
-    with patch("services.user.user_service.UserResponse.from_orm", return_value=UserResponse.model_validate({
-        "id": 1,
-        "email": fake_user.email,
-        "name": fake_user.name,
-        "username": fake_user.username,
-        "type": UserTypeResponse(id=1, user_type='manager')
-    })) as mock_response:
-        result = service.get_users()
-        assert len(result) == 1
-        assert result[0]["id"] == 1
-        mock_response.assert_called_once()
-        mock_repository.get_all.assert_called_once()
+    with patch("services.user.user_service.current_user") as mock_current_user:
+        mock_current_user.id = 2
+        with patch("services.user.user_service.UserResponse.model_validate", return_value=UserResponse.model_validate({
+            "id": 1,
+            "email": fake_user.email,
+            "name": fake_user.name,
+            "username": fake_user.username,
+            "type": UserTypeResponse(id=1, user_type='manager'),
+            "created_by": 2,
+            "updated_by": None
+        })) as mock_response:
+            result = service.get_users()
+
+            assert len(result) == 1
+            assert result[0]["id"] == 1
+            mock_response.assert_called_once()
+            mock_repository.get_all.assert_called_once()
 
 
 def test_get_user_success(service, fake_user):
     with patch.object(service, "get_user_by_id", return_value=fake_user), \
-            patch("services.user.user_service.UserResponse.from_orm", return_value=UserResponse.model_validate({
+            patch("services.user.user_service.UserResponse.model_validate", return_value=UserResponse.model_validate({
                 "id": 1,
                 "email": fake_user.email,
                 "name": fake_user.name,
                 "username": fake_user.username,
-                "type": UserTypeResponse(id=1, user_type='manager')
+                "type": UserTypeResponse(id=1, user_type='manager'),
+                "created_by": 2,
+                "updated_by": None
             })) as mock_response:
         result = service.get_user(1)
         assert result["id"] == 1
@@ -160,19 +181,24 @@ def test_get_user_success(service, fake_user):
 @patch("services.user.user_service.is_invalid_request", return_value=False)
 def test_update_user_success(mock_invalid, service, mock_repository, fake_user, fake_request):
     mock_repository.update.return_value = fake_user
-    with patch.object(service, "get_user_by_id", return_value=fake_user), \
-            patch("services.user.user_service.UserResponse.from_orm", return_value=UserResponse.model_validate({
-                "id": 1,
-                "email": fake_user.email,
-                "name": fake_user.name,
-                "username": fake_user.username,
-                "type": UserTypeResponse(id=1, user_type='manager')
-            })) as mock_response:
-        result = service.update_user(1, fake_request)
-        assert result["id"] == 1
-        fake_user.update.assert_called_once_with(fake_request.__dict__)
-        mock_repository.update.assert_called_once_with(fake_user)
-        mock_response.assert_called_once()
+    with patch("services.user.user_service.current_user") as mock_current_user:
+        mock_current_user.id = 2
+        with patch.object(service, "get_user_by_id", return_value=fake_user), \
+                patch("services.user.user_service.UserResponse.model_validate", return_value=UserResponse.model_validate({
+                    "id": 1,
+                    "email": fake_user.email,
+                    "name": fake_user.name,
+                    "username": fake_user.username,
+                    "type": UserTypeResponse(id=1, user_type='manager'),
+                    "created_by": 1,
+                    "updated_by": 2
+                })) as mock_response:
+            result = service.update_user(1, fake_request)
+            assert result["id"] == 1
+            assert result["updated_by"] == 2
+            fake_user.update.assert_called_once_with(fake_request.__dict__)
+            mock_repository.update.assert_called_once_with(fake_user)
+            mock_response.assert_called_once()
 
 
 @patch("services.user.user_service.is_invalid_request", return_value=True)

@@ -54,17 +54,18 @@ class UserService:
                 username=body.username,
                 name=body.name,
                 user_type=body.user_type,
-                created_at=datetime.now(timezone.utc)
+                created_at=datetime.now(timezone.utc),
+                created_by=current_user.id
             )
         )
-        return UserResponse.from_orm(user).model_dump()
+        return UserResponse.model_validate(user).model_dump()
 
     def get_users(self) -> List[dict[str, Any] | None]:
-        return [UserResponse.from_orm(user).model_dump() for user in self.repository.get_all()]
+        return [UserResponse.model_validate(user).model_dump() for user in self.repository.get_all()]
 
     def get_user(self, user_id: int) -> dict[str, Any] | None:
         user = self.get_user_by_id(user_id=user_id)
-        return UserResponse.from_orm(user).model_dump()
+        return UserResponse.model_validate(user).model_dump()
 
     def update_user(self, user_id: int, body: CreateUserRequest) -> dict[str, Any] | None:
         user = self.get_user_by_id(user_id=user_id)
@@ -74,9 +75,10 @@ class UserService:
 
         user.update(body.__dict__)
         user.updated_at = datetime.now(timezone.utc)
+        user.updated_by = current_user.id
 
         user = self.repository.update(user)
-        return UserResponse.from_orm(user).model_dump()
+        return UserResponse.model_validate(user).model_dump()
 
     def delete_user(self, user_id: int) -> Response | None:
         user = self.get_user_by_id(user_id=user_id)

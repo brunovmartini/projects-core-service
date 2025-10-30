@@ -19,7 +19,7 @@ project_apis = Blueprint('project_apis', __name__)
 @manager_required
 def create_project(body: ProjectRequest):
     """
-    Create a new project.
+    Create a new project. Only accessible by managers.
 
     :param body: ProjectRequest object containing project details
     :type body: ProjectRequest
@@ -60,7 +60,7 @@ def get_project(project_id: int):
 @manager_required
 def update_project(project_id: int, body: ProjectRequest):
     """
-    Update an existing project.
+    Update an existing project. Only accessible by managers.
 
     :param project_id: ID of the project to update
     :type project_id: int
@@ -79,7 +79,7 @@ def update_project(project_id: int, body: ProjectRequest):
 @manager_required
 def delete_project(project_id: int):
     """
-    Delete a project by ID.
+    Delete a project by ID. Only accessible by managers.
 
     :param project_id: ID of the project to delete
     :type project_id: int
@@ -95,7 +95,7 @@ def delete_project(project_id: int):
 @manager_required
 def create_task(project_id: int, body: TaskRequest):
     """
-    Create a new task under a project.
+    Create a new task under a project. Only accessible by managers.
 
     :param project_id: ID of the parent project
     :type project_id: int

@@ -1,2 +1,150 @@
-# projects-core-service
-A Flask application for projects and tasks.
+# Projects-Core-Service
+
+**Projects-Core-Service** is a web application written in Flask for managing users, projects and tasks registrations.
+
+### Requirements 📋
+
+- Python 3.10.12. It’s recommended to use [pyenv](https://github.com/pyenv/pyenv) to easily install the desired Python version.
+- A .env file created at the project root containing the required environment variables.
+- Docker compose installed.
+
+---
+
+### Stack ⚙️
+
+Main frameworks and libraries:
+
+- Flask
+- SQLAlchemy
+- Pytest
+- Pydantic
+
+---
+
+### Running the Application 💻
+
+It’s recommended to create a virtual environment (virtualenv) to isolate the application dependencies. On the root folder:
+```jsx
+python -m venv .venv
+```
+
+After the creation of the virtual environment, it should be activated with following command:
+```jsx
+source .venv/bin/activate
+```
+
+With the virtual environment created and activated, run the following command:
+```jsx
+pip install -r requirements.txt
+```
+
+To start the docker container the following command must be used:
+```jsx
+docker compose up
+```
+
+To run the application locally on http://127.0.0.1:5000/ and create the database tables automatically:
+
+```jsx
+python main.py
+```
+
+To run unit tests and integration tests, the following command must be typed on the root folder in a different terminal or with the application stopped:
+
+```jsx
+pytest
+```
+
+---
+
+### Documentation ️📖
+
+The documentation for the available endpoints were created using `Sphinx` and can be viewed by opening the file `docs/build/html/index.html` with a browser.
+
+On linux, the following command will open the documentation file automatically:
+```jsx
+xdg-open docs/build/html/index.html
+```
+Alternatively on macOS:
+```jsx
+open docs/build/html/index.html
+```
+And on Windows (PowerShell):
+```jsx
+start docs\build\html\index.html
+```
+
+---
+
+### Postman 🔁
+
+The Postman project with all the endpoints of the application can be accessed with the URL:
+
+- https://www.postman.com/bruno-9497913/projects-apis/overview
+
+With the application running after the command `python main.py`, all the endpoints in Postman will be executed at http://127.0.0.1:5000/.
+
+---
+
+### Endpoints 🌐
+
+The endpoints with the GET method can be executed by any user and do not require a logged user.
+
+The endpoints with the POST, PUT and DELETE methods can only be executed by a user with the user type "manager". Therefore, they require a manager to be logged in.
+
+---
+
+### Users 👤
+
+An admin user is automatically created on the database when the application is started for the first time, therefore the first login can be done with the endpoint `POST auth/login` with the following credentials:
+```jsx
+{
+    "email": "admin@admin.com",
+    "password": "admin"
+}
+```
+
+With the admin user logged in, a new user can be created with the create user endpoint `POST /users/` with the following body request structure:
+```jsx
+{
+    "email": "new_user@email.com",
+    "password": "password",
+    "username": "new_user",
+    "name": "New User",
+    "user_type": 1
+}
+```
+
+After the creation of this user, the password will be safely stored in the database with encription. Therefore the admin user can be logged out with the endpoint `/auth/logout` and the new created user can log in to start using the application with its own user.
+
+---
+
+### Architecture 🗒
+
+The architecture follows the principles of Clean Architecture, where the database and API layers are isolated from the business logic and each entity is isolated to maintain the code clear and maintainable.
+
+Therefore, each entity has its own model, repository, resources and database table, allowing for single responsibility, easier testing, and safer modifications. 
+
+### User Type
+
+The user_type table was created to ensure proper relation of user types with users, using a foreign key, and at the same time avoid redundancy.
+
+### User 
+
+The user table was created to store information about the users including name, email, username and encrypted password.
+
+### Project
+
+The project table was created to store information about the projects including name, subject, due_date and start_date. It has a foreign key with the table user to properly store which user created and edited every project.
+
+### Task
+
+The task table was created to store information about the tasks including name, description, due_date and start_date. It has a foreign key with the table user to properly store which user created and edited every task.
+
+
+---
+
+### Observations 📝
+
+- The `.env` file should not be public on the repository for security purposes. On the context of this application, the .env is available on the repository as an example for easy setup of the application. Since the application is only executed locally, the environment variables in its content have no production impact.
+---

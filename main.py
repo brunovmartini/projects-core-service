@@ -15,6 +15,7 @@ from resources.routers.user_routes import user_apis
 from settings.database import db
 from settings.database import get_database_url
 from settings.seed import seed_data
+from sqlalchemy_utils import database_exists, create_database
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "dev-secret-key")
@@ -25,7 +26,7 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
 
 migrate = Migrate()
@@ -35,8 +36,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 with app.app_context():
+    if not database_exists(get_database_url()):
+        create_database(get_database_url())
     db.create_all()
-    seed_data()
+    seed_data(db.session)
 migrate.init_app(app, db)
 
 app.register_blueprint(user_apis, url_prefix='/users')
