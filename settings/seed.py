@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from models.user import User
 from models.user_type import UserType
 from settings.database import db
+from werkzeug.security import generate_password_hash
 
 
 def seed_data():
@@ -18,7 +19,7 @@ def seed_data():
             name="Admin",
             username="admin",
             email="admin@admin.com",
-            password="admin",
+            password=generate_password_hash("admin"),
             user_type=manager_type.id,
             created_at=datetime.now(timezone.utc)
         )

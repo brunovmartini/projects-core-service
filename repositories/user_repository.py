@@ -9,6 +9,9 @@ class UserRepository(IRepository[User, int]):
     def __init__(self, db_session: Session):
         self.db_session = db_session
 
+    def get_by_email(self, email: str) -> User | None:
+        return self.db_session.query(User).options(joinedload(User.type)).filter(User.email == email).first()
+
     @override
     def create(self, data: User) -> User:
         self.db_session.add(data)
@@ -27,6 +30,7 @@ class UserRepository(IRepository[User, int]):
     @override
     def update(self, data: User) -> User | None:
         self.db_session.commit()
+        self.db_session.refresh(data)
         return data
 
     @override
