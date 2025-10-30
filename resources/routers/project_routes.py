@@ -71,8 +71,9 @@ def update_project(project_id: int, body: ProjectRequest):
     :raises NotFound: if project with given ID does not exist
     :raises BadRequest: if request body is invalid
     """
-    return ProjectService(repository=ProjectRepository(db_session=db.session)).update_project(project_id=project_id,
-                                                                                              body=body)
+    return ProjectService(
+        repository=ProjectRepository(db_session=db.session)
+    ).update_project(project_id=project_id, body=body)
 
 
 @project_apis.route('/<int:project_id>', methods=['DELETE'])

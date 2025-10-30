@@ -2,11 +2,10 @@ from datetime import datetime, timezone
 from unittest.mock import Mock, patch
 
 import pytest
-from werkzeug.exceptions import BadRequest
-
 from models.task import Task
 from resources.request.task_request import TaskRequest
 from services.task.task_service import TaskService
+from werkzeug.exceptions import BadRequest
 
 
 @pytest.fixture
@@ -20,11 +19,11 @@ def sample_task():
         id=1,
         name="Test Task",
         description="Sample description",
-        start_date='2025-10-29 14:22:11.949',
-        due_date='2026-10-29 14:22:11.949',
+        start_date="2025-10-29 14:22:11.949",
+        due_date="2026-10-29 14:22:11.949",
         project_id=100,
         created_at=datetime.now(timezone.utc),
-        created_by=1
+        created_by=1,
     )
 
 
@@ -38,20 +37,25 @@ def sample_request():
     )
 
 
-def test_create_task_success(task_service, mock_repository, sample_request, sample_task):
+def test_create_task_success(
+    task_service, mock_repository, sample_request, sample_task
+):
     with patch("services.task.task_service.current_user") as mock_current_user:
         mock_current_user.id = 1
-        with patch("services.task.task_service.is_invalid_request", return_value=False), \
-                patch.object(mock_repository, "create", return_value=sample_task) as mock_create:
+        with patch(
+            "services.task.task_service.is_invalid_request", return_value=False
+        ), patch.object(
+            mock_repository, "create", return_value=sample_task
+        ) as mock_create:
 
             result = task_service.create_task(project_id=100, body=sample_request)
             assert result == {
-                'id': 1,
-                'name': 'Test Task',
-                'description': 'Sample description',
-                'start_date': datetime(2025, 10, 29, 14, 22, 11, 949000),
-                'due_date': datetime(2026, 10, 29, 14, 22, 11, 949000),
-                'created_by': 1
+                "id": 1,
+                "name": "Test Task",
+                "description": "Sample description",
+                "start_date": datetime(2025, 10, 29, 14, 22, 11, 949000),
+                "due_date": datetime(2026, 10, 29, 14, 22, 11, 949000),
+                "created_by": 1,
             }
 
             mock_create.assert_called_once()
@@ -72,10 +76,13 @@ def test_get_tasks_by_project_success(task_service, mock_repository, sample_task
         "name": sample_task.name,
         "description": sample_task.description,
         "project_id": sample_task.project_id,
-        "created_at": sample_task.created_at.isoformat()
+        "created_at": sample_task.created_at.isoformat(),
     }
 
-    with patch("services.task.task_service.TaskResponse.model_validate", return_value=fake_response) as mock_from_orm:
+    with patch(
+        "services.task.task_service.TaskResponse.model_validate",
+        return_value=fake_response,
+    ) as mock_from_orm:
         result = task_service.get_tasks_by_project(project_id=100)
 
         assert len(result) == 1

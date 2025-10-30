@@ -14,5 +14,5 @@ class UserResponse(BaseModel):
     created_by: int
     updated_by: Optional[int]
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict()
     model_config['from_attributes'] = True

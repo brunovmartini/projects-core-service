@@ -11,7 +11,7 @@ from helpers.helpers import is_invalid_request
 from models.user import User
 from repositories.user_repository import UserRepository
 from resources.request.auth_request import LoginRequest
-from resources.request.user_request import CreateUserRequest
+from resources.request.user_request import CreateUserRequest, UpdateUserRequest
 from resources.response.user_response import UserResponse
 
 
@@ -67,7 +67,7 @@ class UserService:
         user = self.get_user_by_id(user_id=user_id)
         return UserResponse.model_validate(user).model_dump()
 
-    def update_user(self, user_id: int, body: CreateUserRequest) -> dict[str, Any] | None:
+    def update_user(self, user_id: int, body: UpdateUserRequest) -> dict[str, Any] | None:
         user = self.get_user_by_id(user_id=user_id)
 
         if is_invalid_request(body):

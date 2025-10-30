@@ -3,11 +3,10 @@ from unittest.mock import Mock, patch
 
 import pytest
 from flask import Response
-from werkzeug.exceptions import BadRequest, NotFound
-
 from models.project import Project
 from resources.request.project_request import ProjectRequest
 from services.project.project_service import ProjectService
+from werkzeug.exceptions import BadRequest, NotFound
 
 
 @pytest.fixture
@@ -21,10 +20,10 @@ def fake_project():
         id=1,
         name="Test Project",
         subject="Testing",
-        start_date='2025-10-29 14:22:11.949',
-        due_date='2026-10-29 14:22:11.949',
+        start_date="2025-10-29 14:22:11.949",
+        due_date="2026-10-29 14:22:11.949",
         created_at=datetime.now(timezone.utc),
-        created_by=1
+        created_by=1,
     )
 
 
@@ -34,7 +33,7 @@ def fake_request():
         name="New Project",
         subject="New Subject",
         start_date="2025-10-29 14:22:11.949",
-        due_date="2026-10-29 14:22:11.949"
+        due_date="2026-10-29 14:22:11.949",
     )
 
 
@@ -54,7 +53,9 @@ def test_get_project_by_id_not_found(service, mock_repository):
 
 
 @patch("services.project.project_service.is_invalid_request", return_value=False)
-def test_create_project_success(mock_is_invalid, service, mock_repository, fake_project, fake_request):
+def test_create_project_success(
+    mock_is_invalid, service, mock_repository, fake_project, fake_request
+):
     mock_repository.create.return_value = fake_project
     with patch("services.project.project_service.current_user") as mock_current_user:
         mock_current_user.id = 1
@@ -67,7 +68,7 @@ def test_create_project_success(mock_is_invalid, service, mock_repository, fake_
             "start_date": datetime(2025, 10, 29, 14, 22, 11, 949000),
             "due_date": datetime(2026, 10, 29, 14, 22, 11, 949000),
             "created_by": 1,
-            "updated_by": None
+            "updated_by": None,
         }
 
         mock_repository.create.assert_called_once()
@@ -92,7 +93,7 @@ def test_get_projects_success(service, mock_repository, fake_project):
             "start_date": datetime(2025, 10, 29, 14, 22, 11, 949000),
             "due_date": datetime(2026, 10, 29, 14, 22, 11, 949000),
             "created_by": 1,
-            "updated_by": None
+            "updated_by": None,
         }
     ]
     mock_repository.get_all.assert_called_once()
@@ -109,13 +110,15 @@ def test_get_project_success(service, fake_project):
             "start_date": datetime(2025, 10, 29, 14, 22, 11, 949000),
             "due_date": datetime(2026, 10, 29, 14, 22, 11, 949000),
             "created_by": 1,
-            "updated_by": None
+            "updated_by": None,
         }
         service.get_project_by_id.assert_called_once_with(project_id=1)
 
 
 @patch("services.project.project_service.is_invalid_request", return_value=False)
-def test_update_project_success(mock_is_invalid, service, mock_repository, fake_project, fake_request):
+def test_update_project_success(
+    mock_is_invalid, service, mock_repository, fake_project, fake_request
+):
     fake_project.update = Mock()
     mock_repository.update.return_value = fake_project
     with (patch("services.project.project_service.current_user") as mock_current_user):
@@ -130,14 +133,16 @@ def test_update_project_success(mock_is_invalid, service, mock_repository, fake_
             "start_date": datetime(2025, 10, 29, 14, 22, 11, 949000),
             "due_date": datetime(2026, 10, 29, 14, 22, 11, 949000),
             "created_by": 1,
-            "updated_by": 2
+            "updated_by": 2,
         }
         fake_project.update.assert_called_once_with(fake_request.__dict__)
         mock_repository.update.assert_called_once_with(fake_project)
 
 
 @patch("services.project.project_service.is_invalid_request", return_value=True)
-def test_update_project_invalid_request(mock_is_invalid, service, fake_project, fake_request):
+def test_update_project_invalid_request(
+    mock_is_invalid, service, fake_project, fake_request
+):
     with patch.object(service, "get_project_by_id", return_value=fake_project):
         with pytest.raises(BadRequest):
             service.update_project(1, fake_request)
