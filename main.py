@@ -7,6 +7,10 @@ from resources.routers.project_routes import project_apis
 from settings.database import db
 from settings.database import get_database_url
 from settings.seed import seed_data
+from models.user import User
+from models.user_type import UserType
+from models.project import Project
+from models.task import Task
 
 app = Flask(__name__)
 
