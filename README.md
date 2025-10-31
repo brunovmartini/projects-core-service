@@ -1,6 +1,6 @@
 # Projects-Core-Service
 
-**Projects-Core-Service** is a web application written in Flask for managing users, projects and tasks registrations.
+**Projects-Core-Service** is a web application created with Flask for managing users, projects and tasks.
 
 ### Requirements 📋
 
@@ -98,15 +98,15 @@ With the application running after the command `python main.py`, all the endpoin
 
 ### Endpoints 🌐
 
-The endpoints with the GET method can be executed by any user and do not require a logged user.
+The endpoints with the `GET` method can be executed by any user and do not require a logged user.
 
-The endpoints with the POST, PUT and DELETE methods can only be executed by a user with the user type "manager". Therefore, they require a manager to be logged in.
+The endpoints with the `POST`, `PUT` and `DELETE` methods can only be executed by a user with the user type `manager`. Therefore, they require a manager to be logged in.
 
 ---
 
 ### Users 👤
 
-An admin user is automatically created on the database when the application is started for the first time, therefore the first login can be done with the endpoint `POST auth/login` with the following credentials:
+A manager user is automatically created on the database when the application is started for the first time, therefore the first login can be done with the endpoint `POST /auth/login` with the following credentials:
 ```jsx
 {
     "email": "admin@admin.com",
@@ -114,7 +114,7 @@ An admin user is automatically created on the database when the application is s
 }
 ```
 
-With the admin user logged in, a new user can be created with the create user endpoint `POST /users/` with the following body request structure:
+With the manager user logged in, a new user can be created with the create user endpoint `POST /users/` with the following body request structure:
 ```jsx
 {
     "email": "new_user@email.com",
@@ -125,7 +125,7 @@ With the admin user logged in, a new user can be created with the create user en
 }
 ```
 
-After the creation of this user, the password will be safely stored in the database with encription. Therefore, the admin user can be logged out with the endpoint `/auth/logout` and the new created user can log in to start using the application with its own user.
+After the creation of this user, the password will be safely stored in the database with encryption. Therefore, the manager user can be logged out with the endpoint `POST /auth/logout` and the new created user can perform the login to start using the application with its own user.
 
 ---
 
@@ -133,23 +133,23 @@ After the creation of this user, the password will be safely stored in the datab
 
 The architecture follows the principles of Clean Architecture, where the database and API layers are isolated from the business logic and each entity is isolated to maintain the code clear and maintainable.
 
-Therefore, each entity has its own model, repository, resources and database table, allowing for single responsibility, easier testing, and safer modifications. 
+Therefore, each entity has its own model, repository, resources and database table, allowing for single responsibility, easier testing and safer modifications. 
 
 ### User Type
 
-The user_type table was created to ensure proper relation of user types with users, using a foreign key, and at the same time avoid redundancy.
+The `user_type` table was created to ensure proper relation of user types with users, using a foreign key, and at the same time avoid redundancy.
 
 ### User 
 
-The user table was created to store information about the users including name, email, username and encrypted password.
+The `user` table was created to store information about the users including name, email, username and encrypted password.
 
 ### Project
 
-The project table was created to store information about the projects including name, subject, due_date and start_date. It has a foreign key with the table user to properly store which user created and edited every project.
+The `project` table was created to store information about the projects including name, subject, due_date and start_date. It has a foreign key with the table `user` to properly store which user created and edited every project.
 
 ### Task
 
-The task table was created to store information about the tasks including name, description, due_date and start_date. It has a foreign key with the table user to properly store which user created and edited every task.
+The `task` table was created to store information about the tasks including name, description, due_date and start_date. It has a foreign key with the table `user` to properly store which user created and edited every task.
 
 
 ---
@@ -163,4 +163,3 @@ The task table was created to store information about the tasks including name, 
 ### Observations 📝
 
 - The `.env` file should not be public on the repository for security purposes. On the context of this application, the `.env` is available on the repository as an example for easy setup of the application. Since the application is only executed locally, the environment variables in its content have no production impact.
----

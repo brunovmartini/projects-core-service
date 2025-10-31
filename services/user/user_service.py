@@ -38,7 +38,7 @@ class UserService:
 
         login_user(user)
 
-        return Response('Login sucessful.', status=200)
+        return Response('Login successful.', status=200)
 
     def create_user(self, body: CreateUserRequest) -> dict[str, Any] | None:
         if is_invalid_request(body):

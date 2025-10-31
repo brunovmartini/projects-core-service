@@ -9,7 +9,7 @@ def test_login_success(mock_get_user_by_email, client, user):
         "/auth/login", json={"email": user.email, "password": "password123"}
     )
     assert response.status_code == 200
-    assert b"Login sucessful" in response.data
+    assert b"Login successful" in response.data
 
 
 @patch("services.user.user_service.UserService.get_user_by_email")
