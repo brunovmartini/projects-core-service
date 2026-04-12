@@ -21,19 +21,9 @@ Main frameworks and libraries:
 
 ---
 
-### Running the Application 💻
+### Application 💻
 
 It’s recommended to create a virtual environment (virtualenv) to isolate the application dependencies.
-
-On the root folder run the following command:
-```jsx
-python -m venv .venv
-```
-
-After the creation of the virtual environment, it should be activated with the following command:
-```jsx
-source .venv/bin/activate
-```
 
 With the virtual environment created and activated, run the following command to install the dependencies:
 ```jsx
@@ -45,7 +35,7 @@ Start the docker container with the following command:
 docker compose up
 ```
 
-To run the application locally on http://127.0.0.1:5000/ and create the database tables automatically, run the following command in a new terminal:
+To run the application on http://127.0.0.1:5000/ and create the database tables automatically, run the following command in a new terminal:
 
 ```jsx
 python main.py
@@ -71,29 +61,6 @@ make html
 
 The documentation can be viewed by opening the file `docs/build/html/index.html` with a browser.
 
-On linux, the following command will open the documentation file automatically when executed on the `/docs` folder:
-```jsx
-xdg-open build/html/index.html
-```
-Alternatively on macOS:
-```jsx
-open build/html/index.html
-```
-And on Windows (PowerShell):
-```jsx
-start build\html\index.html
-```
-
----
-
-### Postman 🔁
-
-The Postman project with all the endpoints of the application can be accessed with the URL:
-
-- https://www.postman.com/bruno-9497913/projects-apis/overview
-
-With the application running after the command `python main.py`, all the endpoints in Postman will be executed at http://127.0.0.1:5000/.
-
 ---
 
 ### Endpoints 🌐
@@ -101,6 +68,12 @@ With the application running after the command `python main.py`, all the endpoin
 The endpoints with the `GET` method can be executed by any user and do not require a logged user.
 
 The endpoints with the `POST`, `PUT` and `DELETE` methods can only be executed by a user with the user type `manager`. Therefore, they require a manager to be logged in.
+
+The Postman project with all the endpoints of the application can be accessed with the URL:
+
+- https://www.postman.com/bruno-9497913/projects-apis/overview
+
+With the application running after the command `python main.py`, all the endpoints in Postman will be executed at http://127.0.0.1:5000/.
 
 ---
 
@@ -134,29 +107,3 @@ After the creation of this user, the password will be safely stored in the datab
 The architecture follows the principles of Clean Architecture, where the database and API layers are isolated from the business logic and each entity is isolated to maintain the code clear and maintainable.
 
 Therefore, each entity has its own model, repository, resources and database table, allowing for single responsibility, easier testing and safer modifications. 
-
-### User Type
-
-The `user_type` table was created to ensure proper relation of user types with users, using a foreign key, and at the same time avoid redundancy.
-
-### User 
-
-The `user` table was created to store information about the users including name, email, username and encrypted password.
-
-### Project
-
-The `project` table was created to store information about the projects including name, subject, due_date and start_date. It has a foreign key with the table `user` to properly store which user created and edited every project.
-
-### Task
-
-The `task` table was created to store information about the tasks including name, description, due_date and start_date. It has a foreign key with the table `user` to properly store which user created and edited every task.
-
-
----
-
-### Extra Functionality ✨
-
-- User authentication, including login and logout endpoints, have been added due to the relation between the type of the user and the permissions of several endpoints.
-- Password encryption has been added for extra security when creating a user.
-- Logging has been added for `POST`, `PUT` and `DELETE` endpoints.
-- Pagination has been added for `GET` endpoints.
