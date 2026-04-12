@@ -40,7 +40,7 @@ pip install -r requirements.txt
 
 Start the docker container with the following command:
 ```jsx
-docker compose up
+docker compose up -d
 ```
 
 To run the application on http://127.0.0.1:5000/ and create the database tables automatically, run the following command in a new terminal:
