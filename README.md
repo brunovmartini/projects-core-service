@@ -4,13 +4,21 @@
 
 ### Requirements 📋
 
-- Python 3.10.12. It’s recommended to use [pyenv](https://github.com/pyenv/pyenv) to easily install the desired Python version.
+- Python 3.12.10. It’s recommended to use [pyenv](https://github.com/pyenv/pyenv) to easily install the desired Python version.
 - A `.env` file created at the project root containing the required environment variables.
 - Docker compose installed.
 
 ---
 
-### Stack ⚙️
+### Architecture ⚙️
+
+The architecture follows the principles of Clean Architecture, where the database and API layers are isolated from the business logic and each entity is isolated to maintain the code clear and maintainable.
+
+Therefore, each entity has its own model, repository, resources and database table, allowing for single responsibility, easier testing and safer modifications. 
+
+---
+
+### Stack 🛠️
 
 Main frameworks and libraries:
 
@@ -99,11 +107,3 @@ With the manager user logged in, a new user can be created with the create user 
 ```
 
 After the creation of this user, the password will be safely stored in the database with encryption. Therefore, the manager user can be logged out with the endpoint `POST /auth/logout` and the new created user can perform the login to start using the application with its own user.
-
----
-
-### Architecture 🗒
-
-The architecture follows the principles of Clean Architecture, where the database and API layers are isolated from the business logic and each entity is isolated to maintain the code clear and maintainable.
-
-Therefore, each entity has its own model, repository, resources and database table, allowing for single responsibility, easier testing and safer modifications. 
