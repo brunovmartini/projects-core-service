@@ -13,7 +13,6 @@
 ### Architecture ⚙️
 
 The architecture follows the principles of Clean Architecture, where the database and API layers are isolated from the business logic and each entity is isolated to maintain the code clear and maintainable.
-
 Therefore, each entity has its own model, repository, resources and database table, allowing for single responsibility, easier testing and safer modifications. 
 
 ---
@@ -23,17 +22,15 @@ Therefore, each entity has its own model, repository, resources and database tab
 Main frameworks and libraries:
 
 - Flask
-- SQLAlchemy
 - Pytest
 - Pydantic
+- SQLAlchemy
 
 ---
 
 ### Application 💻
 
-It’s recommended to create a virtual environment (virtualenv) to isolate the application dependencies.
-
-With the virtual environment created and activated, run the following command to install the dependencies:
+It is recommended to create a virtual environment to isolate the application dependencies. With the virtual environment created and activated, run the following command to install the dependencies:
 ```jsx
 pip install -r requirements.txt
 ```
@@ -43,7 +40,7 @@ Start the docker container with the following command:
 docker compose up -d
 ```
 
-To run the application on http://127.0.0.1:5000/ and create the database tables automatically, run the following command in a new terminal:
+To run the application on http://127.0.0.1:5000/ and create the database tables automatically, run the following command:
 
 ```jsx
 python main.py
@@ -71,7 +68,7 @@ The documentation can be viewed by opening the file `docs/build/html/index.html`
 
 ---
 
-### Endpoints 🌐
+### Endpoints 🔁
 
 The endpoints with the `GET` method can be executed by any user and do not require a logged user.
 
@@ -82,10 +79,6 @@ The Postman project with all the endpoints of the application can be accessed wi
 - https://www.postman.com/bruno-9497913/projects-apis/overview
 
 With the application running after the command `python main.py`, all the endpoints in Postman will be executed at http://127.0.0.1:5000/.
-
----
-
-### Users 👤
 
 A manager user is automatically created on the database when the application is started for the first time, therefore the first login can be done with the endpoint `POST /auth/login` with the following credentials:
 ```jsx
